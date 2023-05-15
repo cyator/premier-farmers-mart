@@ -20,10 +20,22 @@ builder.prismaObject('Product', {
     })
 })
 
-
-builder.queryField('products', (t) => t.prismaField({
-    type: ['Product'],
-    resolve: async (query, root, args, ctx) => {
+//query all products
+builder.queryField('products', (t) => t.prismaConnection({
+    type: 'Product',
+    cursor: 'id',
+    resolve: async (query, _root, _args, _ctx, _info) => {
         return prisma.product.findMany({ ...query })
+    }
+}))
+
+//query producy by id
+builder.queryField('product', (t) => t.prismaField({
+    type: 'Product',
+    args: {
+        id: t.arg.string({ required: true })
+    },
+    resolve: async (query, _root, args, _ctx, _info) => {
+        return prisma.product.findUniqueOrThrow({ ...query, where: { id: args.id } })
     }
 }))
