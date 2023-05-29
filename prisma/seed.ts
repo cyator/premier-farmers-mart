@@ -3,11 +3,12 @@ import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
 
+
 interface Product {
     name: string;
     price: number;
     price_type: string;
-    category: string;
+    categoryId: string;
     stock: number;
     image: string;
 }
@@ -19,26 +20,16 @@ interface Location {
     town: string;
 }
 
+let categories = [{ name: 'groceries' }, { name: 'beauty' }, { name: 'electronics' }, { name: 'clothes' }, { name: 'household' }, { name: 'furniture' }, { name: 'toys' }, { name: 'baby' }, { name: 'sport' }]
 let products: Product[] = [];
 let locations: Location[] = [];
 
-for (let i = 0; i < 50; i++) {
-    products.push({
-        name: faker.commerce.productName(),
-        price: +faker.commerce.price(100, 1000, 0),
-        price_type: faker.commerce.productMaterial(),
-        category: faker.commerce.department(),
-        stock: 50,
-        image: 'groceries/asparagus.png',
-    });
-}
-
 for (let i = 0; i < 10; i++) {
     locations.push({
-        name: faker.address.secondaryAddress(),
-        shipping: +faker.commerce.price(100, 200, 0),
-        county: faker.address.county(),
-        town: faker.address.cityName(),
+        name: faker.location.secondaryAddress(),
+        shipping: +faker.commerce.price({ min: 100, max: 200, dec: 0 }),
+        county: faker.location.county(),
+        town: faker.location.city(),
     });
 }
 
@@ -69,6 +60,23 @@ async function main() {
     await prisma.location.createMany({
         data: locations,
     });
+    await prisma.category.createMany({
+        data: categories,
+    });
+
+    const cdata = await prisma.category.findMany()
+
+    for (let i = 0; i < 50; i++) {
+        products.push({
+            name: faker.commerce.productName(),
+            price: +faker.commerce.price({ min: 100, max: 1000, dec: 0 }),
+            price_type: faker.commerce.productMaterial(),
+            categoryId: cdata[Math.floor(Math.random() * cdata.length)].id,
+            stock: 50,
+            image: 'groceries/asparagus.png',
+        });
+    }
+
     await prisma.product.createMany({
         data: products,
     });

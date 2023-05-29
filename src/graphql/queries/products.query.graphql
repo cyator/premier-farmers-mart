@@ -1,0 +1,25 @@
+query getAllProducts($first: Int, $last: Int, $before: ID, $after: ID) {
+	products(first: $first, last: $last, before: $before, after: $after) {
+		edges {
+			cursor
+			node {
+				id
+				createdAt
+				updatedAt
+				category {
+					name
+				}
+				name
+				price
+				priceType
+				image
+			}
+		}
+		pageInfo {
+			endCursor
+			hasNextPage
+			hasPreviousPage
+			startCursor
+		}
+	}
+}

@@ -4,6 +4,7 @@ import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
 import { DateResolver, PositiveIntResolver } from 'graphql-scalars'
 import { prisma } from '../db'
+import { createContext } from './context'
 
 export const builder = new SchemaBuilder<{
     Scalars: {
@@ -16,6 +17,7 @@ export const builder = new SchemaBuilder<{
             Output: number;
         };
     },
+    Context: ReturnType<typeof createContext>,
     PrismaTypes: PrismaTypes
 }>({
     plugins: [PrismaPlugin, RelayPlugin],

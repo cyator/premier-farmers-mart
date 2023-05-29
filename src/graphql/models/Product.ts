@@ -16,7 +16,7 @@ builder.prismaObject('Product', {
             type: 'Price'
         }),
         priceType: t.exposeString('price_type'),
-        category: t.exposeString('category')
+        category: t.relation('category'),
     })
 })
 
