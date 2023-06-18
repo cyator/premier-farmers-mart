@@ -5,10 +5,12 @@ import Image from 'next/image';
 import { getAllProducts } from '../api'
 import useSWRInfinite from 'swr/infinite'
 import { GetAllProductsQuery, GetAllProductsQueryVariables } from '../graphql/generated'
+import { GetStaticProps } from 'next';
+import Card from '../components/Card'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const getKey = (pageIndex: number, previousPageData: GetAllProductsQuery): { key: string, args: GetAllProductsQueryVariables } | null => {
+const getKey = (pageIndex: number, previousPageData: GetAllProductsQuery | null): { key: string, args: GetAllProductsQueryVariables } | null => {
 
   // reached the end
   if (previousPageData && !previousPageData.products.pageInfo.hasNextPage) return null
@@ -23,21 +25,23 @@ const getKey = (pageIndex: number, previousPageData: GetAllProductsQuery): { key
   // add the cursor to the API endpoint
   return {
     key: 'products', args: {
-      first: 5, after: previousPageData.products.pageInfo.endCursor
+      first: 5, after: previousPageData?.products.pageInfo.endCursor
     }
   }
 }
 
-export default function Home() {
+
+
+export default function Home({ pages }: any) {
 
   const { user, error, isLoading } = useUser();
-  const { data, size, setSize } = useSWRInfinite(getKey, (n) => getAllProducts(n.args))
+  const { data, size, setSize } = useSWRInfinite(getKey, (n) => getAllProducts(n.args), { fallbackData: pages })
 
-
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
 
   const hasNextPage = data && data[data.length - 1].products.pageInfo.hasNextPage
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center p-24 ${inter.className}`}
@@ -65,10 +69,14 @@ export default function Home() {
             Login
           </Link>
         )}
-      {data && data.map((items, index) => {
-        // `data` is an array of each page's API response.
-        return items.products.edges.map(item => <div key={item?.node.id}>{item?.node.name}</div>)
-      })}
+      <div className='grid grid-cols-5 gap-4 mb-4'>
+        {data && data.map((items, index) => {
+          // `data` is an array of each page's API response.
+          return items.products.edges.map(item => <Card key={item?.cursor} product={item?.node} />
+
+          )
+        })}
+      </div>
       {hasNextPage ?
 
         <button className='px-8 py-4 mt-4 bg-red-600' onClick={() => setSize(size + 1)}>Load More</button>
@@ -76,4 +84,18 @@ export default function Home() {
       }
     </main>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const variables = {
+    first: 5,
+  }
+
+  const products = await getAllProducts(variables)
+
+  return {
+    props: {
+      pages: [products]
+    }
+  }
 }
