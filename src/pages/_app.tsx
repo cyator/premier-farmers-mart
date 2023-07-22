@@ -1,8 +1,13 @@
+import '@aws-amplify/ui-react/styles.css';
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { SWRConfig } from 'swr'
 import toast, { Toaster } from 'react-hot-toast';
+import { Amplify } from 'aws-amplify';
+import awsconfig from '../aws-exports';
+Amplify.configure(awsconfig);
+
+import { Authenticator } from '@aws-amplify/ui-react'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -18,10 +23,10 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       }
     }}>
-      <UserProvider>
+      <Authenticator.Provider>
         <Component {...pageProps} />
-        <Toaster />
-      </UserProvider>
+      </Authenticator.Provider>
+      <Toaster />
     </SWRConfig>
   );
 }

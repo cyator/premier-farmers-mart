@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-premierfarmersmart-dev-155640-authRole",
+      "UnauthRoleArn": "arn:aws:iam::342113611767:role/amplify-premierfarmersmart-dev-155640-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::342113611767:role/amplify-premierfarmersmart-dev-155640-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-premierfarmersmart-dev-155640-deployment",
+      "UnauthRoleName": "amplify-premierfarmersmart-dev-155640-unauthRole",
+      "StackName": "amplify-premierfarmersmart-dev-155640",
+      "StackId": "arn:aws:cloudformation:us-east-1:342113611767:stack/amplify-premierfarmersmart-dev-155640/36766ff0-288f-11ee-96da-0e03ddba4b83",
+      "AmplifyAppId": "d3ch9bmgjlj63i"
+    },
+    "categories": {
+      "auth": {
+        "premierfarmersmarta88474d8": {}
+      }
+    }
+  }
+}
